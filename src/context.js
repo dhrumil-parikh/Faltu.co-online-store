@@ -33,14 +33,18 @@ export default class ProductProvider extends Component {
         this.setState(() => {
             return { products: tempProduct };
         });
-        };
+    };
+    
 
         getItem = (id) => {
         const product = this.state.products.find(
             (item) => item.id === id
         );
         return product;
-        };
+    };
+    
+
+
         handleDetails = (id) => {
         const product = this.getItem(id);
         this.setState(() => {
@@ -84,11 +88,50 @@ export default class ProductProvider extends Component {
         };
     
         increment = (id) => {
-        console.log("Incremnting");
+            let tempCart = [...this.state.cart]
+            const selectedProduct = tempCart.find(item => item.id === id)
+            const index = tempCart.indexOf(selectedProduct);
+            const product = tempCart[index];
+
+            product.count = product.count+1;
+            product.total = product.count * product.price;
+
+            this.setState(() => {
+                return {
+                    cart: [...tempCart]
+                    
+                }
+            }, () => {
+                    this.addTotal();
+            })
+            
+
     };
     
         decrement = (id) => {
-        console.log("Decrementing");
+       let tempCart = [...this.state.cart];
+       const selectedProduct = tempCart.find((item) => item.id === id);
+       const index = tempCart.indexOf(selectedProduct);
+       const product = tempCart[index];
+
+            product.count = product.count - 1;
+            if (product.count === 0) {
+                this.removeItem(id)
+            }
+            else {
+                product.total = product.count * product.price;
+                this.setState(
+                  () => {
+                    return {
+                      cart: [...tempCart],
+                    };
+                  },
+                  () => {
+                    this.addTotal();
+                  }
+                );
+            }
+       
     };
     
     removeItem = (id) => {
